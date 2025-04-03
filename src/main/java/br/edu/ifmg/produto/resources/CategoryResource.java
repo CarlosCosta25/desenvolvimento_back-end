@@ -3,12 +3,13 @@ package br.edu.ifmg.produto.resources;
 import br.edu.ifmg.produto.dtos.CategoryDTO;
 import br.edu.ifmg.produto.entities.Category;
 import br.edu.ifmg.produto.services.CategoryService;
+import jakarta.servlet.Servlet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import java.net.URI;
 import java.util.List;
 
 @RestController // diz que cai responder a requisições Web
@@ -26,6 +27,21 @@ public class CategoryResource {
     @GetMapping(value = "/{id}")//diz que essa função responde a uma requisição do tipo get para um id
     public ResponseEntity<CategoryDTO> findById( @PathVariable Long id){ // @PathVariable diz que o id vai vir na url
         return ResponseEntity.ok().body(categoryService.findById(id)); // ok e o codigo 200 do http e o body e o conteudo retornado
+    }
+    @PostMapping
+    public ResponseEntity<CategoryDTO> insert(@RequestBody CategoryDTO dto){
+
+        dto = categoryService.insert(dto); // chama o serviço que vai buscar no banco de dados
+
+        URI uri = ServletUriComponentsBuilder
+                    .fromCurrentRequest().path("/{id}")
+                        .buildAndExpand(dto.getId()).toUri();
+        return ResponseEntity.created(uri).body(dto);
+    }
+    @PutMapping(value = "/{id}") //diz que essa função responde a uma requisição do tipo put para um id
+    public ResponseEntity<CategoryDTO> update(@PathVariable Long id, @RequestBody CategoryDTO dto){
+        dto = categoryService.update(id, dto); // chama o serviço que vai buscar no banco de dados
+        return ResponseEntity.ok().body(dto);
     }
 
 }

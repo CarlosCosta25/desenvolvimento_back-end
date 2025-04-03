@@ -1,7 +1,6 @@
 package br.edu.ifmg.produto.entities;
 
 import jakarta.persistence.*;
-import org.hibernate.validator.constraints.UniqueElements;
 
 import java.util.Objects;
 @Entity //Define que no banco vai ter uma tabela do tipo category
@@ -23,7 +22,7 @@ public class Category {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId() {
         this.id = id;
     }
 
