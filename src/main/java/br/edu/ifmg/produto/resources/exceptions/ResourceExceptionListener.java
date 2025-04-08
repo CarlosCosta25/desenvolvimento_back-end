@@ -1,5 +1,6 @@
 package br.edu.ifmg.produto.resources.exceptions;
 
+import br.edu.ifmg.produto.exceptions.DataBaseException;
 import br.edu.ifmg.produto.exceptions.ResourceNotFound;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,6 +22,19 @@ public class ResourceExceptionListener {
                         Instant.now(),
                         HttpStatus.NOT_FOUND.value(),
                         "Resource not found",
+                        request.getRequestURI(),
+                        ex.getMessage()
+                ));
+
+    }
+    @ExceptionHandler(DataBaseException.class)
+    public ResponseEntity<StandartError> dataBaseExcepion(DataBaseException ex, HttpServletRequest request){
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new StandartError(
+                        Instant.now(),
+                        HttpStatus.BAD_REQUEST.value(),
+                        "database exception",
                         request.getRequestURI(),
                         ex.getMessage()
                 ));

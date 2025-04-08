@@ -2,10 +2,14 @@ package br.edu.ifmg.produto.services;
 
 import br.edu.ifmg.produto.dtos.CategoryDTO;
 import br.edu.ifmg.produto.entities.Category;
+import br.edu.ifmg.produto.exceptions.DataBaseException;
 import br.edu.ifmg.produto.exceptions.ResourceNotFound;
 import br.edu.ifmg.produto.repository.CategoryRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,15 +24,10 @@ public class CategoryService{ // camada que busca no banco de dados
     private CategoryRepository categoryRepository;
 
     @Transactional(readOnly = true) // apenas consulta aos dados não modifica os dados
-    public List<CategoryDTO> findAll() {
-        List<Category> list = categoryRepository.findAll();
+    public Page<CategoryDTO> findAll(Pageable pageable) { // Pageble é uma interface que permite paginar os dados
+        Page<Category> list = categoryRepository.findAll(pageable);
 
-        return list.stream().
-                map(category -> new CategoryDTO(category))
-                .collect(
-                        Collectors.toList()
-                );
-
+    return list.map(category -> new CategoryDTO(category));
     }
     @Transactional(readOnly = true)
     public CategoryDTO findById(Long id) {
@@ -56,5 +55,18 @@ public class CategoryService{ // camada que busca no banco de dados
         }catch (EntityNotFoundException e){
             throw new ResourceNotFound("Category not found "+id);
         }
+    }
+
+    @Transactional
+    public void delete(Long id){
+        if(!categoryRepository.existsById(id)){
+            throw new ResourceNotFound("Category not found "+id);
+        }
+        try {
+             categoryRepository.deleteById(id);
+        }catch (DataIntegrityViolationException e ){
+            throw new DataBaseException("Integrity violation");
+        }
+
     }
 }
