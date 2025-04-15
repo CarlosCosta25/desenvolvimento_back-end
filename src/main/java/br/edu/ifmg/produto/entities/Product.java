@@ -1,5 +1,6 @@
 package br.edu.ifmg.produto.entities;
 
+import br.edu.ifmg.produto.dtos.ProductDTO;
 import jakarta.persistence.*;
 
 import java.time.Instant;
@@ -14,6 +15,7 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private String name;
+    @Column(columnDefinition = "TEXT")
     private String Description;
     private double price;
     private String imageUrl;

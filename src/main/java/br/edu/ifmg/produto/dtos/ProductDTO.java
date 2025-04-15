@@ -91,7 +91,15 @@ public class ProductDTO {
         this.imageUrl = imageUrl;
     }
 
-   @Override
+    public Set<CategoryDTO> getCategories() {
+        return categories;
+    }
+
+    public void setCategories(Set<CategoryDTO> categories) {
+        this.categories = categories;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (!(o instanceof ProductDTO product)) return false;
         return id == product.id;
