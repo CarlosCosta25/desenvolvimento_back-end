@@ -7,6 +7,7 @@ import br.edu.ifmg.produto.entities.Product;
 import br.edu.ifmg.produto.exceptions.DataBaseException;
 import br.edu.ifmg.produto.exceptions.ResourceNotFound;
 import br.edu.ifmg.produto.repository.ProductRepository;
+import br.edu.ifmg.produto.resources.ProductResource;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -15,7 +16,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.Pageable;
 
+
 import java.util.Optional;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
 @Service
 public class ProductService {
@@ -27,7 +31,11 @@ public class ProductService {
     public Page<ProductDTO> findAll(Pageable pageable) {
 
         Page<Product> list = productRepository.findAll(pageable);
-        return list.map(product -> new ProductDTO(product));
+        return list.map(product -> new ProductDTO(product)
+                    .add(linkTo(methodOn(ProductResource.class).findAll(null)).withSelfRel())
+                    .add(linkTo(methodOn(ProductResource.class).findById(product.getId())).withRel("Get a product")
+                    )
+        );
     }
 
 
@@ -38,7 +46,11 @@ public class ProductService {
                 obj.orElseThrow(
                         () -> new ResourceNotFound("Produto não encontrado")
                 )
-        );
+        );/*.add(linkTo(methodOn()).withSelfRel())
+                .add(linkTo(methodOn()).withRel("All products"))
+                .add(linkTo(methodOn()).withRel("Upadate product"))
+                .add(linkTo(methodOn()).withRel("Delete product"));*/
+
         return product;
     }
 
