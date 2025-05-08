@@ -26,6 +26,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -99,6 +100,20 @@ class ProductServiceTest {
         verify(productRepository, times(1))
                 .findAll(pagina);
         //Assertions.assertNotNull((result));
+    }
+
+    @Test
+    @DisplayName("Verificando se o findById retorna o objeto correto")
+    void findByIdShouldReturnProductWhenIdExists() {
+        Product p = Factory.createProduct();
+        p.setId(existingId);
+        //moca os dados
+        when(productRepository.findById(existingId)).thenReturn(Optional.of(p));
+
+        ProductDTO dto = productService.findById(existingId);
+        Assertions.assertNotNull(dto);
+        verify(productRepository, times(1))
+                .findById(existingId);
     }
 
 }
