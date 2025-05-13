@@ -4,7 +4,9 @@ import br.edu.ifmg.produto.dtos.CategoryDTO;
 import jakarta.persistence.*;
 
 import java.time.Instant;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity //Define que no banco vai ter uma tabela do tipo category
 @Table(name = "tb_category")
@@ -17,6 +19,9 @@ public class Category {
     private Instant createdAt;
     @Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE") //Define que o tipo da coluna é timestamp
     private Instant updatedAt;
+
+    @ManyToMany(mappedBy = "categories",fetch = FetchType.LAZY)
+    private Set<Product> products = new HashSet<>();
 
     public Category(Long id, String name) {
         this.id = id;
@@ -74,5 +79,17 @@ public class Category {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 '}';
+    }
+
+    public Set<Product> getProducts() {
+        return products;
+    }
+
+    public void setProducts(Set<Product> products) {
+        this.products = products;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 }

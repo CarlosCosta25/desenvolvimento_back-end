@@ -12,7 +12,7 @@ public class Factory {
         p.setPrice(50000);
         p.setImageUrl("https://www.apple.com/v/iphone/home/ai/images/heroes/iphone-14-pro/hero_static__d1v0x2j4g7i6_large.jpg");
         p.getCategories()
-                .add(new Category(60L,"Ne"));
+                .add(new Category(1L,"Livros"));
         return p;
     }
     public static ProductDTO createProductDTO(){
