@@ -6,16 +6,19 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 
+import java.lang.reflect.Field;
 import java.time.Instant;
 
 @ControllerAdvice
 public class ResourceExceptionListener {
 
     @ExceptionHandler(ResourceNotFound.class)
-    public ResponseEntity<StandartError> resorceNotFound(ResourceNotFound ex, HttpServletRequest request){
+    public ResponseEntity<StandartError> resorceNotFound(ResourceNotFound ex, HttpServletRequest request) {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .body(new StandartError(
@@ -27,8 +30,9 @@ public class ResourceExceptionListener {
                 ));
 
     }
+
     @ExceptionHandler(DataBaseException.class)
-    public ResponseEntity<StandartError> dataBaseExcepion(DataBaseException ex, HttpServletRequest request){
+    public ResponseEntity<StandartError> dataBaseExcepion(DataBaseException ex, HttpServletRequest request) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(new StandartError(
@@ -39,6 +43,23 @@ public class ResourceExceptionListener {
                         ex.getMessage()
                 ));
 
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ValidationError> methodArgumentNotValidException(MethodArgumentNotValidException ex, HttpServletRequest request) {
+         ValidationError error = new ValidationError();
+        error.setTimestamp(Instant.now());
+        error.setStatus(HttpStatus.UNPROCESSABLE_ENTITY.value());
+        error.setError("Validation exception");
+        error.setPath(request.getRequestURI());
+        error.setMessage(ex.getMessage());
+        for (FieldError f : ex.getFieldErrors()) {
+            error.addFieldMessage(f.getField(),f.getDefaultMessage());
+        }
+
+        return ResponseEntity
+                .status(HttpStatus.UNPROCESSABLE_ENTITY)
+                .body(error);
     }
 
 }

@@ -9,6 +9,7 @@ import java.util.Set;
 @Entity
 @Table(name = "tb_user")
 public class User {
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
     private String firstName;
@@ -31,9 +32,11 @@ public class User {
         this.email = email;
         this.password = password;
     }
+
     public User() {
     }
-    public User(User entity){
+
+    public User(User entity) {
         this.id = entity.getId();
         this.firstName = entity.getFirstName();
         this.lastName = entity.getLastName();
@@ -41,9 +44,9 @@ public class User {
         this.password = entity.getPassword();
     }
 
-    public User(User entity,Set<Role> roles){
-       this(entity);
-       this.roles = roles;
+    public User(User entity, Set<Role> roles) {
+        this(entity);
+        this.roles = roles;
     }
 
     public long getId() {
@@ -92,6 +95,20 @@ public class User {
 
     public void setRole(Set<Role> roles) {
         this.roles = roles;
+    }
+
+    public void addRole(Role role) {
+        roles.add(role);
+    }
+
+    public boolean hasRole(String roleName) {
+        return !roles.
+                stream().
+                    filter(
+                            r -> r.getAuthority().equals(roleName)
+                    )
+                .toList()
+                    .isEmpty();
     }
 
     @Override
