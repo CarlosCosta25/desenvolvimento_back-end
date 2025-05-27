@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -36,6 +37,7 @@ public class UserResource {
                     @ApiResponse(description = "OK", responseCode = "200")
             }
     )
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public ResponseEntity<Page<UserDTO>> findAll(Pageable pageable) {
         return ResponseEntity.ok().body(userService.findAll(pageable));
     }
@@ -49,6 +51,7 @@ public class UserResource {
                     @ApiResponse(description = "Not Found", responseCode = "404")
             }
     )
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public ResponseEntity<UserDTO> findById(@PathVariable long id) {
         return ResponseEntity.ok(userService.findById(id));
     }
@@ -64,6 +67,7 @@ public class UserResource {
                     @ApiResponse(description = "Forbbiden", responseCode = "403")
             }
     )
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public ResponseEntity<UserDTO> insert(@Valid @RequestBody UserInsertDTO dto) {
         UserDTO user = userService.insert(dto);
 
@@ -87,6 +91,7 @@ public class UserResource {
                     @ApiResponse(description = "Not Found", responseCode = "404")
             }
     )
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public ResponseEntity<UserDTO> update(@PathVariable long id, @Valid @RequestBody UserDTO user) {
         return ResponseEntity.ok().body(userService.update(id, user));
     }
@@ -103,6 +108,7 @@ public class UserResource {
                     @ApiResponse(description = "Not Found", responseCode = "404"),
             }
     )
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public ResponseEntity<Void> delete(@PathVariable long id) {
         userService.delete(id);
         return ResponseEntity.noContent().build();

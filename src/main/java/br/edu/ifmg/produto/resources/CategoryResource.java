@@ -10,6 +10,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -41,6 +42,7 @@ public class CategoryResource {
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_OPERATOR')") // diz que apenas usuarios com a role admin ou operator podem acessar esse endpoint
     public ResponseEntity<CategoryDTO> insert(@RequestBody CategoryDTO dto) {
 
         dto = categoryService.insert(dto); // chama o serviço que vai buscar no banco de dados
@@ -52,12 +54,14 @@ public class CategoryResource {
     }
 
     @PutMapping(value = "/{id}") //diz que essa função responde a uma requisição do tipo put para um id
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_OPERATOR')")
     public ResponseEntity<CategoryDTO> update(@PathVariable Long id, @RequestBody CategoryDTO dto) {
         dto = categoryService.update(id, dto); // chama o serviço que vai buscar no banco de dados
         return ResponseEntity.ok().body(dto);
     }
 
     @DeleteMapping(value = "/{id}") //diz que essa função responde a uma requisição do tipo delete para um id
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_OPERATOR')")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         categoryService.delete(id); // chama o serviço que vai buscar no banco de dados
         return ResponseEntity.noContent().build();   // retorna o codigo 204 do http indica que o servidor processou uma solicitação com sucesso, mas não há conteúdo a ser retornado

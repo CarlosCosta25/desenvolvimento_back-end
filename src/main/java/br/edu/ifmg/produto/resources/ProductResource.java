@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
@@ -60,6 +61,7 @@ public class ProductResource {
                     @ApiResponse(description = "Forbbiden", responseCode = "403")
             }
     )
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_OPERATOR')")
     public ResponseEntity<ProductDTO> insert(@Valid @RequestBody ProductDTO product) {
         URI uri = ServletUriComponentsBuilder.
                 fromCurrentRequest().
@@ -81,6 +83,7 @@ public class ProductResource {
                     @ApiResponse(description = "Not Found", responseCode = "404")
             }
     )
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_OPERATOR')")
     public ResponseEntity<ProductDTO>update(@PathVariable long id, @Valid @RequestBody ProductDTO product) {
         return ResponseEntity.ok().body(productService.update(id, product));
     }
@@ -96,6 +99,7 @@ public class ProductResource {
                     @ApiResponse(description = "Not Found", responseCode = "404"),
             }
     )
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_OPERATOR')")
     public ResponseEntity<Void>delete(@PathVariable long id){
         productService.delete(id);
         return ResponseEntity.noContent().build();
