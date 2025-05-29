@@ -1,7 +1,7 @@
 package br.edu.ifmg.produto.services;
 
-import br.edu.ifmg.produto.dtos.CategoryDTO;
 import br.edu.ifmg.produto.dtos.ProductDTO;
+import br.edu.ifmg.produto.dtos.ProductListDTO;
 import br.edu.ifmg.produto.entities.Category;
 import br.edu.ifmg.produto.entities.Product;
 import br.edu.ifmg.produto.exceptions.DataBaseException;
@@ -32,9 +32,9 @@ public class ProductService {
 
         Page<Product> list = productRepository.findAll(pageable);
         return list.map(product -> new ProductDTO(product)
-                    .add(linkTo(methodOn(ProductResource.class).findAll(null)).withSelfRel())
-                    .add(linkTo(methodOn(ProductResource.class).findById(product.getId())).withRel("Get a product")
-                    )
+                .add(linkTo(methodOn(ProductResource.class).findAll(null)).withSelfRel())
+                .add(linkTo(methodOn(ProductResource.class).findById(product.getId())).withRel("Get a product")
+                )
         );
     }
 
@@ -51,7 +51,7 @@ public class ProductService {
         return product
                 .add(linkTo(methodOn(ProductResource.class).findById(product.getId())).withSelfRel())
                 .add(linkTo(methodOn(ProductResource.class).findAll(null)).withRel("All products"))
-                .add(linkTo(methodOn(ProductResource.class).update(product.getId(),product)).withRel("Upadate product"))
+                .add(linkTo(methodOn(ProductResource.class).update(product.getId(), product)).withRel("Upadate product"))
                 .add(linkTo(methodOn(ProductResource.class).delete(product.getId())).withRel("Delete product"));
     }
 
@@ -105,6 +105,10 @@ public class ProductService {
                         entity.getCategories().add(new Category(categoryDTO)
                         )
                 );
+    }
+
+    public Page<ProductListDTO> findAllPaged(String categoryId, String name, Pageable pageable) {
+        return null;
     }
 }
 

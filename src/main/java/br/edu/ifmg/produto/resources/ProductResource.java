@@ -1,6 +1,7 @@
 package br.edu.ifmg.produto.resources;
 
 import br.edu.ifmg.produto.dtos.ProductDTO;
+import br.edu.ifmg.produto.dtos.ProductListDTO;
 import br.edu.ifmg.produto.services.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -13,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
 import java.net.URI;
 
 @RestController
@@ -27,7 +29,7 @@ public class ProductResource {
 
     @GetMapping(produces = "application/json")
     @Operation(
-            description ="Get all product",
+            description = "Get all product",
             summary = "Get all product",
             responses = {
                     @ApiResponse(description = "OK", responseCode = "200")
@@ -39,7 +41,7 @@ public class ProductResource {
 
     @GetMapping(value = "/{id}", produces = "application/json")
     @Operation(
-            description ="Get a product",
+            description = "Get a product",
             summary = "Get a product",
             responses = {
                     @ApiResponse(description = "OK", responseCode = "200"),
@@ -52,7 +54,7 @@ public class ProductResource {
 
     @PostMapping(produces = "application/json")
     @Operation(
-            description ="Create a new product",
+            description = "Create a new product",
             summary = "Create a new product",
             responses = {
                     @ApiResponse(description = "Created", responseCode = "201"),
@@ -65,15 +67,15 @@ public class ProductResource {
     public ResponseEntity<ProductDTO> insert(@Valid @RequestBody ProductDTO product) {
         URI uri = ServletUriComponentsBuilder.
                 fromCurrentRequest().
-                                    path("/{id}").
-                                            buildAndExpand(product.getId())
-                                                .toUri();
+                path("/{id}").
+                buildAndExpand(product.getId())
+                .toUri();
         return ResponseEntity.created(uri).body(productService.insert(product));
     }
 
     @PutMapping(value = "/{id}", produces = "application/json")
     @Operation(
-            description ="Update a product",
+            description = "Update a product",
             summary = "Update a product",
             responses = {
                     @ApiResponse(description = "OK", responseCode = "200"),
@@ -84,12 +86,13 @@ public class ProductResource {
             }
     )
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_OPERATOR')")
-    public ResponseEntity<ProductDTO>update(@PathVariable long id, @Valid @RequestBody ProductDTO product) {
+    public ResponseEntity<ProductDTO> update(@PathVariable long id, @Valid @RequestBody ProductDTO product) {
         return ResponseEntity.ok().body(productService.update(id, product));
     }
+
     @DeleteMapping(value = "/{id}")
     @Operation(
-            description ="Delete a product",
+            description = "Delete a product",
             summary = "Delete a product",
             responses = {
                     @ApiResponse(description = "OK", responseCode = "200"),
@@ -100,8 +103,25 @@ public class ProductResource {
             }
     )
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_OPERATOR')")
-    public ResponseEntity<Void>delete(@PathVariable long id){
+    public ResponseEntity<Void> delete(@PathVariable long id) {
         productService.delete(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping(produces = "application/json", value = "/paged")
+    @Operation(
+            description = "Get all product paged",
+            summary = "Get all product paged",
+            responses = {
+                    @ApiResponse(description = "OK", responseCode = "200")
+            }
+    )
+    public ResponseEntity<Page<ProductListDTO>> findAllPaged(
+            Pageable pageable,
+            @RequestParam(value = "CategoryId", defaultValue = "0") String categoryId,
+            @RequestParam(value = "name", defaultValue = "") String name
+    ) {
+        return ResponseEntity.ok().body(productService.findAllPaged(categoryId,name,pageable));
+    }
+
 }
