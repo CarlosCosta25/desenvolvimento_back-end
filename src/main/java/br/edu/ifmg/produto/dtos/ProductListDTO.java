@@ -2,6 +2,7 @@ package br.edu.ifmg.produto.dtos;
 
 import br.edu.ifmg.produto.entities.Category;
 import br.edu.ifmg.produto.entities.Product;
+import br.edu.ifmg.produto.projections.ProductProjection;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -39,7 +40,14 @@ public ProductListDTO(long id, String name, double price, String imageUrl) {
         this.imageUrl = imageUrl;
     }
 
-    public ProductListDTO(Product entity){
+    public ProductListDTO(ProductListDTO productListDTO) {
+        this.id = productListDTO.getId();
+        this.name = productListDTO.getName();
+        this.price = productListDTO.getPrice();
+        this.imageUrl = productListDTO.getImageUrl();
+    }
+
+    public ProductListDTO(ProductProjection entity){
         this.id = entity.getId();
         this.name = entity.getName();
         this.price = entity.getPrice();

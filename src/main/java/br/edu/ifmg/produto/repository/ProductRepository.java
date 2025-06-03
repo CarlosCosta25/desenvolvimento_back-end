@@ -32,7 +32,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
                         FROM tb_product p
                         INNER JOIN tb_product_category pc
                         ON pc.product_id = p.id
-                        WHERE (:categoriesId IS NULL || pc.category_id in :categoriesId)
+                        WHERE (:categoriesId IS NULL OR pc.category_id in :categoriesId)
                          AND LOWER(p.name) LIKE LOWER(CONCAT('%',:name,'%'))
                      ) as tb_result;
                     """

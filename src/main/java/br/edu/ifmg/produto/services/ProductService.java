@@ -6,19 +6,25 @@ import br.edu.ifmg.produto.entities.Category;
 import br.edu.ifmg.produto.entities.Product;
 import br.edu.ifmg.produto.exceptions.DataBaseException;
 import br.edu.ifmg.produto.exceptions.ResourceNotFound;
+import br.edu.ifmg.produto.projections.ProductProjection;
 import br.edu.ifmg.produto.repository.ProductRepository;
 import br.edu.ifmg.produto.resources.ProductResource;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.Pageable;
 
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
+import static java.util.stream.Collectors.toList;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
 @Service
@@ -108,7 +114,20 @@ public class ProductService {
     }
 
     public Page<ProductListDTO> findAllPaged(String categoryId, String name, Pageable pageable) {
-        return null;
+
+        List<Long> ids = null;
+        if (categoryId.equals("0"))
+            Arrays.stream(categoryId.split(";")).map(
+                    id -> Long.parseLong(id)
+            ).toList();
+        Page<ProductProjection> productsProjection = productRepository.searchProduct(ids, name, pageable);
+
+        List<ProductListDTO> dtos = productsProjection
+                .stream().
+                    map(
+                            ProductListDTO::new
+                ).toList();
+        return new PageImpl<>(dtos, pageable, productsProjection.getTotalElements());
     }
 }
 
