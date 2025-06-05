@@ -118,7 +118,7 @@ public class ProductResource {
     )
     public ResponseEntity<Page<ProductListDTO>> findAllPaged(
             Pageable pageable,
-            @RequestParam(value = "CategoryId", defaultValue = "0") String categoryId,
+            @RequestParam(value = "categoryId", defaultValue = "0") String categoryId,
             @RequestParam(value = "name", defaultValue = "") String name
     ) {
         return ResponseEntity.ok().body(productService.findAllPaged(categoryId,name,pageable));

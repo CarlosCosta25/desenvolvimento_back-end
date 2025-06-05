@@ -1,6 +1,9 @@
 package br.edu.ifmg.produto.dtos;
 
+import jakarta.validation.constraints.NotBlank;
+
 public class UserInsertDTO extends UserDTO{
+    @NotBlank
     private String password;
 
     public UserInsertDTO() {

@@ -15,13 +15,13 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     @Query(
             nativeQuery = true,
             value = """
-                    SELECT (*) FROM
+                    SELECT * FROM
                     (
                     SELECT DISTINCT p.id, p.name, p.image_url, p.price
                     FROM tb_product p
                     INNER JOIN tb_product_category pc
                     ON pc.product_id = p.id
-                    WHERE (:categoriesId IS NULL || pc.category_id in :categoriesId)
+                    WHERE (pc.category_id in :categoriesId)
                      AND LOWER(p.name) LIKE LOWER(CONCAT('%',:name,'%'))
                      ) as tb_result;
                     """,
@@ -32,10 +32,37 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
                         FROM tb_product p
                         INNER JOIN tb_product_category pc
                         ON pc.product_id = p.id
-                        WHERE (:categoriesId IS NULL OR pc.category_id in :categoriesId)
+                        WHERE (pc.category_id in :categoriesId)
                          AND LOWER(p.name) LIKE LOWER(CONCAT('%',:name,'%'))
                      ) as tb_result;
                     """
     )
     public Page<ProductProjection> searchProduct(List<Long> categoriesId, String name, Pageable peageble);
+
+
+    @Query(
+            nativeQuery = true,
+            value = """
+                    SELECT * FROM
+                    (
+                    SELECT DISTINCT p.id, p.name, p.image_url, p.price
+                    FROM tb_product p
+                    INNER JOIN tb_product_category pc
+                    ON pc.product_id = p.id
+                    WHERE LOWER(p.name) LIKE LOWER(CONCAT('%',:name,'%'))
+                     ) as tb_result;
+                    """,
+            countQuery = """
+                    SELECT count(*) FROM
+                    (
+                        SELECT p.id, p.name, p.image_url, p.price
+                        FROM tb_product p
+                        INNER JOIN tb_product_category pc
+                        ON pc.product_id = p.id
+                        WHERE LOWER(p.name) LIKE LOWER(CONCAT('%',:name,'%'))
+                     ) as tb_result;
+                    """
+    )
+    public Page<ProductProjection> searchProductWithoutCategories(String name, Pageable peageble);
+
 }
