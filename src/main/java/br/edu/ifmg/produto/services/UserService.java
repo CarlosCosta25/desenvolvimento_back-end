@@ -53,7 +53,7 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional
-    public UserDTO findById(Long id){
+    public UserDTO findById(Long id) {
         Optional<User> obj = repository.findById(id);
         return new UserDTO(
                 obj.orElseThrow(
@@ -63,9 +63,9 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional
-    public UserDTO insert(UserInsertDTO dto){
+    public UserDTO insert(UserInsertDTO dto) {
         User entity = new User();
-        copyDtoTOEntity(dto,entity);
+        copyDtoTOEntity(dto, entity);
 
         entity.setPassword(
                 passwordEncoder.
@@ -102,11 +102,11 @@ public class UserService implements UserDetailsService {
         }
     }
 
-    public void copyDtoTOEntity(UserDTO dto, User entity){
+    public void copyDtoTOEntity(UserDTO dto, User entity) {
         entity.setFirstName(dto.getFirstName());
         entity.setLastName(dto.getLastName());
         entity.setEmail(dto.getEmail());
-        for (RoleDTO role : dto.getRole()){
+        for (RoleDTO role : dto.getRole()) {
             Role r = roleRepository.getReferenceById(role.getId());
             entity.getRole().add(r);
         }
@@ -118,29 +118,29 @@ public class UserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-         List<UserDetailsProjection> results = repository.searchUserAndRoleByEmail(username);
-         if(results.size() == 0){
-             throw new UsernameNotFoundException("User not found");
-         }
-         User user = new User();
-         user.setEmail(results.get(0).getUsername());
-            user.setPassword(results.get(0).getPassword());
+        List<UserDetailsProjection> results = repository.searchUserAndRoleByEmail(username);
+        if (results.size() == 0) {
+            throw new UsernameNotFoundException("User not found");
+        }
+        User user = new User();
+        user.setEmail(results.get(0).getUsername());
+        user.setPassword(results.get(0).getPassword());
 
-            for(UserDetailsProjection result : results) {
-                user.addRole(new Role(result.getRoleId(), result.getAuthority()));
-            }
+        for (UserDetailsProjection result : results) {
+            user.addRole(new Role(result.getRoleId(), result.getAuthority()));
+        }
 
         return user;
     }
 
     @Transactional
-    public UserDTO sigUp(UserInsertDTO dto){
+    public UserDTO signUp(UserInsertDTO dto) {
         User entity = new User();
-        copyDtoTOEntity(dto,entity);
+        copyDtoTOEntity(dto, entity);
 
-         Role role = roleRepository.findByAuthority("ROLE_USER");
+        Role role = roleRepository.findByAuthority("ROLE_OPERATOR");
 
-         entity.getRole().clear();
+        entity.getRole().clear();
 
         entity.getRole().add(role);
 

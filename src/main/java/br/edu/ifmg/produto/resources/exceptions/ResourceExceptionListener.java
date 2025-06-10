@@ -1,6 +1,7 @@
 package br.edu.ifmg.produto.resources.exceptions;
 
 import br.edu.ifmg.produto.exceptions.DataBaseException;
+import br.edu.ifmg.produto.exceptions.EmailException;
 import br.edu.ifmg.produto.exceptions.ResourceNotFound;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -61,5 +62,20 @@ public class ResourceExceptionListener {
                 .status(HttpStatus.UNPROCESSABLE_ENTITY)
                 .body(error);
     }
+
+    @ExceptionHandler(EmailException.class)
+    public ResponseEntity<StandartError> emailException(EmailException ex, HttpServletRequest request) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new StandartError(
+                        Instant.now(),
+                        HttpStatus.BAD_REQUEST.value(),
+                        "Email error",
+                        request.getRequestURI(),
+                        ex.getMessage()
+                ));
+
+    }
+
 
 }
