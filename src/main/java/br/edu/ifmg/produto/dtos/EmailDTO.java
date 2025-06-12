@@ -20,7 +20,7 @@ public class EmailDTO {
         this.body = body;
     }
 
-    public EmailDTO() {
+    public EmailDTO(String token, String email, String subject, String body) {
     }
 
     public String getTo() {
