@@ -8,7 +8,6 @@ import br.edu.ifmg.produto.entities.User;
 import br.edu.ifmg.produto.exceptions.ResourceNotFound;
 import br.edu.ifmg.produto.repository.PasswordRecoverRepository;
 import br.edu.ifmg.produto.repository.UserRepository;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -81,5 +80,6 @@ public class AuthService {
         }
         User user = userRepository.findByEmail(list.getFirst().getEmail());
         user.setPassword(passwordEncoder.encode(dto.getNewPassword()));
+        userRepository.save(user);
     }
 }
